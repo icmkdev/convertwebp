@@ -5,21 +5,20 @@ const sharp = require('sharp');
 const app = express();
 const upload = multer();
 
-app.post('/convert-webp', upload.single('image'), async (req, res) => {
+app.post('/convert', upload.single('image'), async (req, res) => {
   try {
-    if (!req.file) return res.status(400).send('No image uploaded');
-
-    const webpBuffer = await sharp(req.file.buffer)
+    const buffer = await sharp(req.file.buffer)
       .webp({ quality: 80 })
       .toBuffer();
 
     res.set('Content-Type', 'image/webp');
-    res.send(webpBuffer);
+    res.send(buffer);
   } catch (err) {
     console.error(err);
-    res.status(500).send('Conversion failed');
+    res.status(500).send('Conversion error');
   }
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(process.env.PORT || 3000, () => {
+  console.log('Server running');
+});
