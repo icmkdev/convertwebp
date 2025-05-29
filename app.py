@@ -8,21 +8,14 @@ logging.basicConfig(level=logging.INFO)
 
 @app.route("/convert", methods=["POST"])
 def convert_to_webp():
-    logging.info("Received POST /convert")
-    logging.info(f"Request files: {request.files}")
+    data = request.get_data()
+    if not data:
+        return {"error": "No image received"}, 400
 
-    if 'data' not in request.files:
-        return {"error": "No image uploaded"}, 400
-
-    file = request.files['data']
-    img = Image.open(file.stream).convert("RGB")
+    img = Image.open(io.BytesIO(data)).convert("RGB")
 
     output = io.BytesIO()
     img.save(output, format="WEBP")
     output.seek(0)
 
     return send_file(output, mimetype="image/webp", as_attachment=True, download_name="converted.webp")
-
-@app.route("/")
-def home():
-    return "WebP Converter API is running."
