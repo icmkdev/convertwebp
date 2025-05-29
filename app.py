@@ -6,7 +6,7 @@ app = Flask(__name__)
 
 @app.route("/convert", methods=["POST"])
 def convert_to_webp():
-    if 'image' not in request.files:
+    if 'data' not in request.files:
         return {"error": "No image uploaded"}, 400
 
     file = request.files['image']
